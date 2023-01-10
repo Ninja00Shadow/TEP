@@ -113,9 +113,6 @@ void KnapsackProblem::loadFromFile(std::string fileName) {
 }
 
 KnapsackProblem::~KnapsackProblem() {
-    delete[] weights;
-    delete[] values;
-
 }
 
 

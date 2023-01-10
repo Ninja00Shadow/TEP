@@ -81,6 +81,14 @@ public:
         return referenceCounter->get();
     }
 
+    bool operator==(MySmartPointer<T> const &other) {
+        return pointer == other.pointer;
+    }
+
+    bool operator==(T* other) {
+        return pointer == other;
+    }
+
 
 private:
     T* pointer;

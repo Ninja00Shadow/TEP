@@ -15,7 +15,7 @@ public:
     Individual();
     ~Individual();
 
-    void setIndividual(std::vector<int> genes, unsigned int genesLength, KnapsackProblem *problem);
+    void setIndividual(std::vector<int> genes, unsigned int genesLength, KnapsackProblem* problem);
 
     void mutate(double mutationProbability);
     std::vector<MySmartPointer<Individual>> crossover(MySmartPointer<Individual> individual);
@@ -33,7 +33,7 @@ private:
     int genesLength;
     int fitness;
 
-    KnapsackProblem *problem;
+    KnapsackProblem* problem;
 
     void setGenes(std::vector<int> genes, unsigned int genesLength);
 };

@@ -15,7 +15,7 @@ public:
     GeneticAlgorithm();
     ~GeneticAlgorithm();
 
-    void setGeneticAlgorithm(KnapsackProblem *problem, unsigned int populationSize, unsigned int numberOfGenerations,
+    void setGeneticAlgorithm(KnapsackProblem* problem, unsigned int populationSize, unsigned int numberOfGenerations,
                              double mutationProbability, double crossoverProbability);
 
     void run();
@@ -29,7 +29,7 @@ private:
     int numberOfGenerations;
     double crossoverProbability;
     double mutationProbability;
-    KnapsackProblem *problem;
+    KnapsackProblem* problem;
 
 };
 

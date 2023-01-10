@@ -8,7 +8,7 @@ Individual::Individual() {
     fitness = 0;
 }
 
-void Individual::setIndividual(std::vector<int> genes, unsigned int genesLength, KnapsackProblem *problem) {
+void Individual::setIndividual(std::vector<int> genes, unsigned int genesLength, KnapsackProblem* problem) {
     if (problem == nullptr || genesLength != problem->getNumberOfItems() || genes.empty() || genesLength == 0) {
         std::cout << "Wrong input data! (setIndividual)" << std::endl;
         return;

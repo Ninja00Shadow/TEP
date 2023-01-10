@@ -14,10 +14,10 @@ GeneticAlgorithm::GeneticAlgorithm() {
 }
 
 GeneticAlgorithm::~GeneticAlgorithm() {
-    population.clear();
+
 }
 
-void GeneticAlgorithm::setGeneticAlgorithm(KnapsackProblem *problem, unsigned int populationSize,
+void GeneticAlgorithm::setGeneticAlgorithm(KnapsackProblem* problem, unsigned int populationSize,
                                            unsigned int numberOfGenerations, double mutationProbability,
                                            double crossoverProbability) {
     if (problem == nullptr || populationSize == 0 || numberOfGenerations == 0 || mutationProbability == 0 ||
@@ -32,7 +32,6 @@ void GeneticAlgorithm::setGeneticAlgorithm(KnapsackProblem *problem, unsigned in
     this->problem = problem;
 
     population.clear();
-    population.resize(populationSize);
 }
 
 void GeneticAlgorithm::run() {
@@ -41,27 +40,42 @@ void GeneticAlgorithm::run() {
         for (int j = 0; j < problem->getNumberOfItems(); ++j) {
             genes[j] = rand() % 2;
         }
-        population[i] = new Individual();
+        population.push_back(new Individual());
         population[i]->setIndividual(genes, problem->getNumberOfItems(), problem);
     }
 
     for (int i = 0; i < numberOfGenerations; ++i) {
         std::vector<MySmartPointer<Individual>> newPopulation;
-        newPopulation.resize(populationSize);
 
-        for (int j = 0; j < populationSize; ++j) {
+        for (int j = 0; newPopulation.size() < populationSize; ++j) {
             MySmartPointer<Individual> firstParent = population[rand() % populationSize];
-            MySmartPointer<Individual> secondParent = population[rand() % populationSize];
+            MySmartPointer<Individual> temp = population[rand() % populationSize];
 
-            MySmartPointer<Individual> child = new Individual();
+            if (temp->getFitness() > firstParent->getFitness()) {
+                firstParent = temp;
+            }
+
+            MySmartPointer<Individual> secondParent = population[rand() % populationSize];
+            temp = population[rand() % populationSize];
+
+            if (temp->getFitness() > secondParent->getFitness()) {
+                secondParent = temp;
+            }
+
             if (rand() % 100 < crossoverProbability * 100) {
                 std::vector<MySmartPointer<Individual>> children = firstParent->crossover(secondParent);
-                child = children[rand() % 2];
+                newPopulation.push_back(children[0]);
+                if (newPopulation.size() < populationSize) {
+                    newPopulation.push_back(children[0]);
+                    newPopulation.push_back(children[1]);
+                }
             } else {
-                child = firstParent;
+                newPopulation.push_back(firstParent);
+                newPopulation.push_back(secondParent);
             }
-            child->mutate(mutationProbability);
-            newPopulation[j] = child;
+        }
+        for (int j = 0; j < newPopulation.size(); ++j) {
+            newPopulation[j]->mutate(mutationProbability);
         }
     }
 }
