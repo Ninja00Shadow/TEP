@@ -89,7 +89,6 @@ public:
         return pointer == other;
     }
 
-
 private:
     T* pointer;
     ReferenceCounter* referenceCounter;

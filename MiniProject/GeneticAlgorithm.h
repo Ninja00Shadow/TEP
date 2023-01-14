@@ -13,12 +13,14 @@
 class GeneticAlgorithm {
 public:
     GeneticAlgorithm();
+
+    GeneticAlgorithm(int populationSize, int numberOfGenerations, double mutationProbability,
+                     double crossoverProbability, KnapsackProblem *problem);
+
     ~GeneticAlgorithm();
 
-    void setGeneticAlgorithm(KnapsackProblem* problem, unsigned int populationSize, unsigned int numberOfGenerations,
-                             double mutationProbability, double crossoverProbability);
-
     void run();
+
     void clearPopulation();
 
     void printBestIndividual();
@@ -29,8 +31,28 @@ private:
     int numberOfGenerations;
     double crossoverProbability;
     double mutationProbability;
-    KnapsackProblem* problem;
+    KnapsackProblem *problem;
 
+    MySmartPointer<Individual> bestIndividual;
+
+    MySmartPointer<Individual> selectParent();
+
+    void generateAndAddChildrenToPopulation(std::vector<MySmartPointer<Individual>> newPopulation);
+
+    void bestIndividualUpdate(MySmartPointer<Individual> individual);
+
+    bool checkPopulationSize(int populationSize) const;
+
+    bool checkNumberOfGenerations(int numberOfGenerations) const;
+
+    bool checkCrossoverProbability(double crossoverProbability) const;
+
+    bool checkMutationProbability(double mutationProbability) const;
+
+    bool checkProblem(KnapsackProblem *problem) const;
+
+    bool checkAll(int populationSize, int numberOfGenerations, double crossoverProbability, double mutationProbability,
+                  KnapsackProblem *problem) const;
 };
 
 

@@ -6,6 +6,7 @@
 #define TEP_INDIVIDUAL_H
 
 #include <vector>
+#include <ostream>
 #include "KnapsackProblem.h"
 #include "C:\Users\Dawid\CLionProjects\TEP\TEP5\MySmartPointer.h"
 
@@ -13,9 +14,9 @@
 class Individual {
 public:
     Individual();
+    Individual(Individual& other);
+    Individual(int numberOfItems, KnapsackProblem *problem);
     ~Individual();
-
-    void setIndividual(std::vector<int> genes, unsigned int genesLength, KnapsackProblem* problem);
 
     void mutate(double mutationProbability);
     std::vector<MySmartPointer<Individual>> crossover(MySmartPointer<Individual> individual);
@@ -28,6 +29,8 @@ public:
 
     void print();
 
+    friend std::ostream &operator<<(std::ostream &os, const Individual &individual);
+
 private:
     std::vector<int> genes;
     int genesLength;
@@ -36,6 +39,10 @@ private:
     KnapsackProblem* problem;
 
     void setGenes(std::vector<int> genes, unsigned int genesLength);
+
+    bool checkNumberOfItems(int numberOfItems) const;
+    bool checkProblem(KnapsackProblem *problem) const;
+    bool checkAll(int numberOfItems, KnapsackProblem *problem) const;
 };
 
 

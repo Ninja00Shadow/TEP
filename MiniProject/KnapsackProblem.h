@@ -11,10 +11,9 @@ class KnapsackProblem {
 public:
     KnapsackProblem();
 
-    ~KnapsackProblem();
+    KnapsackProblem(int capacity, int numberOfItems, int* weights, int weightsLength, int* values, int valuesLength);
 
-    void setKnapsackProblem(unsigned int capacity, unsigned int numberOfItems, int *weights, unsigned int weightsLength,
-                            int *values, unsigned int valuesLength);
+    ~KnapsackProblem();
 
     int getCapacity() const { return capacity; }
 
@@ -49,20 +48,19 @@ public:
     void loadFromFile(std::string fileName);
 
 private:
-    unsigned int capacity;
-    unsigned int numberOfItems;
+    int capacity;
+    int numberOfItems;
     int *weights;
-    unsigned int weightsLength;
+    int weightsLength;
     int *values;
-    unsigned int valuesLength;
+    int valuesLength;
 
-    bool checkWeights(int *weights, unsigned int weightsLength, unsigned int numberOfItems);
+    bool checkWeights(int *weights, int weightsLength, int numberOfItems);
 
-    bool checkValues(int *values, unsigned int valuesLength, unsigned int numberOfItems);
+    bool checkValues(int *values, int valuesLength, int numberOfItems);
 
     bool
-    checkAll(unsigned int capacity, unsigned int numberOfItems, int *weights, unsigned int weightsLength, int *values,
-             unsigned int valuesLength);
+    checkAll(int capacity, int numberOfItems, int *weights, int weightsLength, int *values, int valuesLength);
 };
 
 
