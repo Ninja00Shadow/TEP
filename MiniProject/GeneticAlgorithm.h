@@ -37,7 +37,7 @@ private:
 
     MySmartPointer<Individual> selectParent();
 
-    void generateAndAddChildrenToPopulation(std::vector<MySmartPointer<Individual>> newPopulation);
+    void generateAndAddChildrenToPopulation(std::vector<MySmartPointer<Individual>>& newPopulation);
 
     void bestIndividualUpdate(MySmartPointer<Individual> individual);
 

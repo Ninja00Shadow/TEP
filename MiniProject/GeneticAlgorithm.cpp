@@ -88,7 +88,7 @@ void GeneticAlgorithm::bestIndividualUpdate(MySmartPointer<Individual> individua
 
 }
 
-void GeneticAlgorithm::generateAndAddChildrenToPopulation(std::vector<MySmartPointer<Individual>> newPopulation) {
+void GeneticAlgorithm::generateAndAddChildrenToPopulation(std::vector<MySmartPointer<Individual>>& newPopulation) {
     for (int j = 0; newPopulation.size() < populationSize; ++j) {
         MySmartPointer<Individual> firstParent = selectParent();
         MySmartPointer<Individual> secondParent = selectParent();
