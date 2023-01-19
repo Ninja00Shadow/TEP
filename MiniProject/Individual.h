@@ -14,35 +14,35 @@
 class Individual {
 public:
     Individual();
-    Individual(Individual& other);
-    Individual(int numberOfItems, KnapsackProblem *problem);
+    Individual(const Individual& other);
+    Individual(KnapsackProblem *problem);
+    Individual(Individual&& other);
     ~Individual();
 
+    Individual& operator=(const Individual& other);
+    Individual& operator=(Individual&& other) ;
+
     void mutate(double mutationProbability);
-    std::vector<MySmartPointer<Individual>> crossover(MySmartPointer<Individual> individual);
+    std::vector<MySmartPointer<Individual>> crossover(MySmartPointer<Individual> const& individual) const;
 
     void evaluate();
 
     int getFitness() const { return fitness; }
     std::vector<int> getGenes() const { return genes; }
-    unsigned int getGenesLength() const { return genesLength; }
-
-    void print();
+    int getGenesLength() const { return genes.size(); }
 
     friend std::ostream &operator<<(std::ostream &os, const Individual &individual);
 
 private:
     std::vector<int> genes;
-    int genesLength;
     int fitness;
 
-    KnapsackProblem* problem;
+    KnapsackProblem* problem{};
 
-    void setGenes(std::vector<int> genes, unsigned int genesLength);
+    void setGenes(std::vector<int> genes);
 
-    bool checkNumberOfItems(int numberOfItems) const;
-    bool checkProblem(KnapsackProblem *problem) const;
-    bool checkAll(int numberOfItems, KnapsackProblem *problem) const;
+    bool checkProblem() const;
+    bool checkAll() const;
 };
 
 

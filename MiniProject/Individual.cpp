@@ -3,6 +3,7 @@
 //
 
 #include "Individual.h"
+#include <cmath>
 
 Individual::Individual() {
     fitness = 0;
@@ -18,16 +19,16 @@ void Individual::mutate(double mutationProbability) {
     evaluate();
 }
 
-std::vector<MySmartPointer<Individual>> Individual::crossover(MySmartPointer<Individual> individual) {
-    int splitPoint = rand() % genesLength;
+std::vector<MySmartPointer<Individual>> Individual::crossover(const MySmartPointer<Individual>& individual) const {
+    int splitPoint = rand() % genes.size();
 
-    MySmartPointer<Individual> firstChild = new Individual(genesLength, problem);
-    MySmartPointer<Individual> secondChild = new Individual(genesLength, problem);
+    MySmartPointer<Individual> firstChild = new Individual(problem);
+    MySmartPointer<Individual> secondChild = new Individual(problem);
 
-    std::vector<int> firstChildGenes = std::vector<int>(genesLength);
-    std::vector<int> secondChildGenes = std::vector<int>(genesLength);
+    std::vector<int> firstChildGenes = std::vector<int>(genes.size());
+    std::vector<int> secondChildGenes = std::vector<int>(genes.size());
 
-    for (int i = 0; i < genesLength; ++i) {
+    for (int i = 0; i < genes.size(); ++i) {
         if (i < splitPoint) {
             firstChildGenes[i] = genes[i];
             secondChildGenes[i] = individual->getGenes()[i];
@@ -37,8 +38,8 @@ std::vector<MySmartPointer<Individual>> Individual::crossover(MySmartPointer<Ind
         }
     }
 
-    firstChild->setGenes(firstChildGenes, genesLength);
-    secondChild->setGenes(secondChildGenes, genesLength);
+    firstChild->setGenes(firstChildGenes);
+    secondChild->setGenes(secondChildGenes);
 
     std::vector<MySmartPointer<Individual>> children;
     children.push_back(firstChild);
@@ -47,62 +48,74 @@ std::vector<MySmartPointer<Individual>> Individual::crossover(MySmartPointer<Ind
     return children;
 }
 
-void Individual::setGenes(std::vector<int> genes, unsigned int genesLength) {
-    this->genes = genes;
-    this->genesLength = genesLength;
-
+void Individual::setGenes(std::vector<int> genes) {
+    this->genes = std::move(genes);
 }
 
 void Individual::evaluate() {
     fitness = problem->evaluateSolution(genes);
 }
 
-Individual::~Individual() {
-}
+Individual::~Individual() = default;
 
-void Individual::print() {
-    std::cout << "Genes: ";
-    for (int i = 0; i < genesLength; ++i) {
-        std::cout << genes[i] << " ";
-    }
-}
 
-Individual::Individual(Individual &other) {
+Individual::Individual(const Individual &other) {
     this->genes = other.getGenes();
-    this->genesLength = other.getGenesLength();
     this->fitness = other.getFitness();
     this->problem = other.problem;
 }
 
-Individual::Individual(int numberOfItems, KnapsackProblem *problem) {
-    if (!checkAll(numberOfItems, problem)) {
+Individual::Individual(KnapsackProblem *problem) {
+    this->problem = problem;
+
+    if (!checkAll()) {
         throw std::invalid_argument("Wrong input data! (Individual)");
     }
-    this->genesLength = numberOfItems;
-    this->problem = problem;
-    for (int i = 0; i < numberOfItems; ++i) {
-        genes.push_back(rand() % 2);
+
+    for (int i = 0; i < problem->getNumberOfItems(); ++i) {
+        if (problem->getFillingRatio() > (rand() % 100) / 100.0) {
+            genes.push_back(1);
+        } else {
+            genes.push_back(0);
+        }
     }
+
     evaluate();
 }
 
-bool Individual::checkNumberOfItems(int numberOfItems) const {
-    return numberOfItems > 0;
+bool Individual::checkProblem() const {
+    return problem != nullptr && problem->getNumberOfItems() > 0;
 }
 
-bool Individual::checkProblem(KnapsackProblem *problem) const {
-    return problem != nullptr;
-}
-
-bool Individual::checkAll(int numberOfItems, KnapsackProblem *problem) const {
-    return checkNumberOfItems(numberOfItems) && checkProblem(problem);
+bool Individual::checkAll() const {
+    return checkProblem();
 }
 
 std::ostream &operator<<(std::ostream &os, const Individual &individual) {
     os << "genes: ";
-    for (int i = 0; i < individual.genesLength; ++i) {
+    for (int i = 0; i < individual.getGenesLength(); ++i) {
         os << individual.genes[i] << " ";
     }
     os << std::endl << "fitness: " << individual.fitness << std::endl;
     return os;
+}
+
+Individual::Individual(Individual &&other) {
+    if (this != &other) {
+        this->genes = other.getGenes();
+        this->fitness = other.getFitness();
+        this->problem = other.problem;
+
+        other.genes.clear();
+        other.fitness = 0;
+        other.problem = nullptr;
+    }
+}
+
+Individual &Individual::operator=(const Individual &other) {
+    return *this = Individual(other);
+}
+
+Individual &Individual::operator=(Individual &&other) {
+    return *this = Individual(other);
 }

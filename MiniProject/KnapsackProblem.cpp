@@ -5,37 +5,25 @@
 #include <fstream>
 #include <vector>
 #include "KnapsackProblem.h"
+#include <cmath>
 
-KnapsackProblem::KnapsackProblem() {
-    capacity = 0;
-    numberOfItems = 0;
-    weights = new int[0];
-    weightsLength = 0;
-    values = new int[0];
-    valuesLength = 0;
-}
-
-
-
-bool KnapsackProblem::checkWeights(int *weights, int weightsLength, int numberOfItems) {
-    for (int i = 0; i < weightsLength; ++i) {
+bool KnapsackProblem::checkWeights() const {
+    for (int i = 0; i < numberOfItems; ++i) {
         if (weights[i] <= 0) return false;
     }
-    return weightsLength == numberOfItems;
+    return weights.size() == numberOfItems;
 }
 
-bool KnapsackProblem::checkValues(int *values, int valuesLength, int numberOfItems) {
-    for (int i = 0; i < valuesLength; ++i) {
+bool KnapsackProblem::checkValues() const {
+    for (int i = 0; i < numberOfItems; ++i) {
         if (values[i] <= 0) return false;
     }
-    return valuesLength == numberOfItems;
+    return values.size() == numberOfItems;
 }
 
 bool
-KnapsackProblem::checkAll(int capacity, int numberOfItems, int *weights, int weightsLength,
-                          int *values, int valuesLength) {
-    return capacity != 0 && numberOfItems != 0 && checkWeights(weights, weightsLength, numberOfItems) &&
-           checkValues(values, valuesLength, numberOfItems);
+KnapsackProblem::checkAll() const{
+    return capacity != 0 && numberOfItems != 0 && checkWeights() && checkValues();
 }
 
 
@@ -43,12 +31,12 @@ void KnapsackProblem::printProblem() {
     std::cout << "Capacity: " << capacity << std::endl;
     std::cout << "Number of items: " << numberOfItems << std::endl;
     std::cout << "Weights: ";
-    for (int i = 0; i < weightsLength; ++i) {
+    for (int i = 0; i < numberOfItems; ++i) {
         std::cout << weights[i] << " ";
     }
     std::cout << std::endl;
     std::cout << "Values: ";
-    for (int i = 0; i < valuesLength; ++i) {
+    for (int i = 0; i < numberOfItems; ++i) {
         std::cout << values[i] << " ";
     }
     std::cout << std::endl;
@@ -65,57 +53,71 @@ int KnapsackProblem::evaluateSolution(std::vector<int> solution) {
     return sum;
 }
 
-void KnapsackProblem::saveToFile(std::string fileName) {
+void KnapsackProblem::saveToFile(const std::string& fileName) {
     std::ofstream file;
     file.open(fileName);
     file << numberOfItems << std::endl;
     file << capacity << std::endl;
-    for (int i = 0; i < weightsLength; ++i) {
+    for (int i = 0; i < numberOfItems; ++i) {
         file << values[i] << " " << weights[i] << std::endl;
     }
     file << std::endl;
     file.close();
 }
 
-void KnapsackProblem::loadFromFile(std::string fileName) {
+void KnapsackProblem::loadFromFile(const std::string& fileName) {
     std::ifstream file;
     file.open(fileName);
     file >> numberOfItems;
     file >> capacity;
 
-    weights = new int[numberOfItems];
-    values = new int[numberOfItems];
+    weights = std::vector<int>(numberOfItems);
+    values = std::vector<int>(numberOfItems);
 
     for (int i = 0; i < numberOfItems; ++i) {
         file >> values[i];
         file >> weights[i];
     }
 
-    file.close();
+    calculateFillingRatio();
 }
 
-KnapsackProblem::~KnapsackProblem() {
-}
+KnapsackProblem::~KnapsackProblem() = default;
 
-KnapsackProblem::KnapsackProblem(int capacity, int numberOfItems, int *weights, int weightsLength, int *values,
-                                 int valuesLength) {
-    if (!checkAll(capacity, numberOfItems, weights, weightsLength, values, valuesLength)) {
-        throw std::invalid_argument("Wrong input data! (KnapsackProblem)");
-    }
+KnapsackProblem::KnapsackProblem(int capacity, int numberOfItems, std::vector<int>& weights, std::vector<int>& values) {
     this->capacity = capacity;
     this->numberOfItems = numberOfItems;
+    this->weights = weights;
+    this->values = values;
 
-    this->weights = new int[weightsLength];
-    for (int i = 0; i < weightsLength; ++i) {
-        this->weights[i] = weights[i];
+    if (!checkAll()) {
+        throw std::invalid_argument("Wrong input data! (KnapsackProblem)");
     }
-    this->weightsLength = weightsLength;
 
-    this->values = new int[valuesLength];
-    for (int i = 0; i < valuesLength; ++i) {
-        this->values[i] = values[i];
+    calculateFillingRatio();
+}
+
+double KnapsackProblem::getFillingRatio() const {
+    return fillingRatio;
+}
+
+void KnapsackProblem::calculateFillingRatio() {
+    for (int weight : weights) {
+        fillingRatio += weight;
     }
-    this->valuesLength = valuesLength;
+
+    fillingRatio = capacity / fillingRatio;
+
+    if (fillingRatio > 0.05) fillingRatio = sqrt(fillingRatio);
+    else fillingRatio = pow(fillingRatio, 2);
+}
+
+KnapsackProblem::KnapsackProblem(const std::string& fileName) {
+    loadFromFile(fileName);
+
+    if (!checkAll()) {
+        throw std::invalid_argument("Wrong input data! (KnapsackProblem)");
+    }
 }
 
 

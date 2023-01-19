@@ -45,6 +45,11 @@ public:
     T* operator->() {
         return pointer;
     }
+
+    T* operator->() const {
+        return pointer;
+    }
+
     T& operator*() {
         return *pointer;
     }

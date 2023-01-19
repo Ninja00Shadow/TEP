@@ -25,6 +25,8 @@ public:
 
     void printBestIndividual();
 
+    std::tuple<std::vector<int>, int> getBestIndividual();
+
 private:
     int populationSize;
     std::vector<MySmartPointer<Individual>> population;
@@ -32,27 +34,27 @@ private:
     double crossoverProbability;
     double mutationProbability;
     KnapsackProblem *problem;
-
     MySmartPointer<Individual> bestIndividual;
+
+
 
     MySmartPointer<Individual> selectParent();
 
-    void generateAndAddChildrenToPopulation(std::vector<MySmartPointer<Individual>>& newPopulation);
+    void fillNewPopulation(std::vector<MySmartPointer<Individual>>& newPopulation);
 
-    void bestIndividualUpdate(MySmartPointer<Individual> individual);
+    void bestIndividualUpdate();
 
-    bool checkPopulationSize(int populationSize) const;
+    bool checkPopulationSize() const;
 
-    bool checkNumberOfGenerations(int numberOfGenerations) const;
+    bool checkNumberOfGenerations() const;
 
-    bool checkCrossoverProbability(double crossoverProbability) const;
+    bool checkCrossoverProbability() const;
 
-    bool checkMutationProbability(double mutationProbability) const;
+    bool checkMutationProbability() const;
 
-    bool checkProblem(KnapsackProblem *problem) const;
+    bool checkProblem() const;
 
-    bool checkAll(int populationSize, int numberOfGenerations, double crossoverProbability, double mutationProbability,
-                  KnapsackProblem *problem) const;
+    bool checkAll() const;
 };
 
 
