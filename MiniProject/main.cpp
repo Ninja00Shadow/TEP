@@ -38,6 +38,86 @@ void test1() {
 
 }
 
+void problemExceptionTest() {
+    int capacity = 15;
+    int numberOfItems = 9;
+    std::vector<int> weights = {2, 3, 4, 5, 9, 7, 8, 6, 1};
+    std::vector<int> invalidWeights = {2, 3, -4, 5, 9, 7, 8, 6, 1, 1};
+    std::vector<int> values = {3, 4, 5, 8, 10, 2, 9, 7, 6};
+    std::vector<int> invalidValues = {3, 4, 5, 8, 10, 2, 9, 7, 6, 1};
+
+    try {
+        KnapsackProblem problem = KnapsackProblem(capacity, 0, weights, values);
+    }
+    catch (InvalidNumberOfItemsException& e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        KnapsackProblem problem = KnapsackProblem(0, numberOfItems, weights, values);
+    }
+    catch (InvalidCapacityException& e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        KnapsackProblem problem = KnapsackProblem(capacity, numberOfItems, invalidWeights, values);
+    }
+    catch (InvalidWeightException& e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        KnapsackProblem problem = KnapsackProblem(capacity, numberOfItems, weights, invalidValues);
+    }
+    catch (InvalidValueException& e) {
+        std::cout << e.what() << std::endl;
+    }
+}
+
+void geneticAlgorithmExceptionTest() {
+    int capacity = 15;
+    int numberOfItems = 9;
+    std::vector<int> weights = {2, 3, 4, 5, 9, 7, 8, 6, 1};
+    std::vector<int> values = {3, 4, 5, 8, 10, 2, 9, 7, 6};
+    KnapsackProblem problem = KnapsackProblem(capacity, numberOfItems, weights, values);
+
+    try {
+        GeneticAlgorithm geneticAlgorithm = GeneticAlgorithm(0, 1000, 0.05, 0.8, &problem);
+    }
+    catch (InvalidPopulationSizeException& e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        GeneticAlgorithm geneticAlgorithm = GeneticAlgorithm(200, 0, 0.05, 0.8, &problem);
+    }
+    catch (InvalidNumberOfGenerationsException& e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        GeneticAlgorithm geneticAlgorithm = GeneticAlgorithm(200, 1000, -0.05, 0.8, &problem);
+    }
+    catch (InvalidMutationProbabilityException& e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        GeneticAlgorithm geneticAlgorithm = GeneticAlgorithm(200, 1000, 0.05, -0.8, &problem);
+    }
+    catch (InvalidCrossoverProbabilityException& e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    try {
+        GeneticAlgorithm geneticAlgorithm = GeneticAlgorithm(200, 1000, 0.05, 0.8, nullptr);
+    }
+    catch (ProblemNotSetException& e) {
+        std::cout << e.what() << std::endl;
+    }
+}
+
 void testSaving() {
     int capacity = 15;
     int numberOfItems = 9;
@@ -97,10 +177,18 @@ int main() {
 
     std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 
+    problemExceptionTest();
+
+    std::cout << "-------------------------------------------------------------------------------------" << std::endl;
+
+    geneticAlgorithmExceptionTest();
+
+    std::cout << "-------------------------------------------------------------------------------------" << std::endl;
+
     testSaving();
 
     std::cout << "-------------------------------------------------------------------------------------" << std::endl;
 
-//    testLoadingSmallProblems();
-    testLoadingLargeProblems();
+    testLoadingSmallProblems();
+//    testLoadingLargeProblems();
 }

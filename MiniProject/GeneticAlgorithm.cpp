@@ -22,9 +22,7 @@ GeneticAlgorithm::GeneticAlgorithm(int populationSize, int numberOfGenerations, 
     this->crossoverProbability = crossoverProbability;
     this->problem = problem;
 
-    if (!checkAll()) {
-        throw std::invalid_argument("Wrong input data! (GeneticAlgorithm)");
-    }
+    checkAll();
 }
 
 GeneticAlgorithm::~GeneticAlgorithm() = default;
@@ -108,30 +106,32 @@ void GeneticAlgorithm::fillNewPopulation(std::vector<MySmartPointer<Individual>>
 }
 
 
-bool GeneticAlgorithm::checkPopulationSize() const {
-    return populationSize > 0;
+void GeneticAlgorithm::checkPopulationSize() const {
+    if (populationSize <= 0) throw InvalidPopulationSizeException();
 }
 
-bool GeneticAlgorithm::checkNumberOfGenerations() const {
-    return numberOfGenerations > 0;
+void GeneticAlgorithm::checkNumberOfGenerations() const {
+    if (numberOfGenerations <= 0) throw InvalidNumberOfGenerationsException();
 }
 
-bool GeneticAlgorithm::checkCrossoverProbability() const {
-    return crossoverProbability >= 0;
+void GeneticAlgorithm::checkCrossoverProbability() const {
+    if (crossoverProbability < 0 || crossoverProbability > 1) throw InvalidCrossoverProbabilityException();
 }
 
-bool GeneticAlgorithm::checkMutationProbability() const {
-    return mutationProbability >= 0;
+void GeneticAlgorithm::checkMutationProbability() const {
+    if (mutationProbability < 0 || mutationProbability > 1) throw InvalidMutationProbabilityException();
 }
 
-bool GeneticAlgorithm::checkProblem() const {
-    return problem != nullptr;
+void GeneticAlgorithm::checkProblem() const {
+    if (problem == nullptr) throw ProblemNotSetException();
 }
 
-bool GeneticAlgorithm::checkAll() const {
-    return checkPopulationSize() && checkNumberOfGenerations() &&
-           checkCrossoverProbability() &&
-           checkMutationProbability() && checkProblem();
+void GeneticAlgorithm::checkAll() const {
+    checkPopulationSize();
+    checkNumberOfGenerations();
+    checkCrossoverProbability();
+    checkMutationProbability();
+    checkProblem();
 }
 
 std::tuple<std::vector<int>, int> GeneticAlgorithm::getBestIndividual() {

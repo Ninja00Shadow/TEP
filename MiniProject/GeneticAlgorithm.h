@@ -9,6 +9,7 @@
 #include <vector>
 #include "KnapsackProblem.h"
 #include "Individual.h"
+#include "GeneticAlgorithmExceptions.h"
 
 class GeneticAlgorithm {
 public:
@@ -44,17 +45,17 @@ private:
 
     void bestIndividualUpdate();
 
-    bool checkPopulationSize() const;
+    void checkPopulationSize() const;
 
-    bool checkNumberOfGenerations() const;
+    void checkNumberOfGenerations() const;
 
-    bool checkCrossoverProbability() const;
+    void checkCrossoverProbability() const;
 
-    bool checkMutationProbability() const;
+    void checkMutationProbability() const;
 
-    bool checkProblem() const;
+    void checkProblem() const;
 
-    bool checkAll() const;
+    void checkAll() const;
 };
 
 

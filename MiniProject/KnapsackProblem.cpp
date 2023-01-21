@@ -7,23 +7,25 @@
 #include "KnapsackProblem.h"
 #include <cmath>
 
-bool KnapsackProblem::checkWeights() const {
+void KnapsackProblem::checkWeights() const {
     for (int i = 0; i < numberOfItems; ++i) {
-        if (weights[i] <= 0) return false;
+        if (weights[i] <= 0) throw InvalidWeightException("Weight of item " + std::to_string(i) + " is invalid");
     }
-    return weights.size() == numberOfItems;
+    if (weights.size() != numberOfItems) throw InvalidWeightException("Number of weights is invalid");
 }
 
-bool KnapsackProblem::checkValues() const {
+void KnapsackProblem::checkValues() const {
     for (int i = 0; i < numberOfItems; ++i) {
-        if (values[i] <= 0) return false;
+        if (values[i] <= 0) throw InvalidValueException("Value of item " + std::to_string(i) + " is invalid");
     }
-    return values.size() == numberOfItems;
+    if (values.size() != numberOfItems) throw InvalidValueException("Number of values is invalid");
 }
 
-bool
-KnapsackProblem::checkAll() const{
-    return capacity != 0 && numberOfItems != 0 && checkWeights() && checkValues();
+void KnapsackProblem::checkAll() const{
+    if (numberOfItems <= 0) throw InvalidNumberOfItemsException("Number of items is invalid");
+    if (capacity <= 0) throw InvalidCapacityException("Capacity is invalid");
+    checkWeights();
+    checkValues();
 }
 
 
@@ -68,17 +70,21 @@ void KnapsackProblem::saveToFile(const std::string& fileName) {
 void KnapsackProblem::loadFromFile(const std::string& fileName) {
     std::ifstream file;
     file.open(fileName);
-    file >> numberOfItems;
-    file >> capacity;
 
-    weights = std::vector<int>(numberOfItems);
-    values = std::vector<int>(numberOfItems);
-
-    for (int i = 0; i < numberOfItems; ++i) {
-        file >> values[i];
-        file >> weights[i];
+    if (file.is_open()) {
+        file >> numberOfItems;
+        file >> capacity;
+        weights.resize(numberOfItems);
+        values.resize(numberOfItems);
+        for (int i = 0; i < numberOfItems; ++i) {
+            file >> values[i];
+            file >> weights[i];
+        }
+        file.close();
     }
-
+    else {
+        throw FileProblemException("File not found");
+    }
     calculateFillingRatio();
 }
 
@@ -90,9 +96,7 @@ KnapsackProblem::KnapsackProblem(int capacity, int numberOfItems, std::vector<in
     this->weights = weights;
     this->values = values;
 
-    if (!checkAll()) {
-        throw std::invalid_argument("Wrong input data! (KnapsackProblem)");
-    }
+    checkAll();
 
     calculateFillingRatio();
 }
@@ -115,9 +119,7 @@ void KnapsackProblem::calculateFillingRatio() {
 KnapsackProblem::KnapsackProblem(const std::string& fileName) {
     loadFromFile(fileName);
 
-    if (!checkAll()) {
-        throw std::invalid_argument("Wrong input data! (KnapsackProblem)");
-    }
+    checkAll();
 }
 
 

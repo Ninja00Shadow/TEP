@@ -6,6 +6,7 @@
 #define TEP_KNAPSACKPROBLEM_H
 
 #include <iostream>
+#include "KnapsackProblemExceptions.h"
 
 class KnapsackProblem {
 public:
@@ -34,11 +35,11 @@ private:
     std::vector<int> values;
     double fillingRatio{};
 
-    bool checkWeights() const;
+    void checkWeights() const;
 
-    bool checkValues() const;
+    void checkValues() const;
 
-    bool checkAll() const;
+    void checkAll() const;
 
     void calculateFillingRatio();
 
