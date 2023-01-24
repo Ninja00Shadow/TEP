@@ -6,6 +6,7 @@
 #include <vector>
 #include "KnapsackProblem.h"
 #include <cmath>
+#include <sstream>
 
 void KnapsackProblem::checkWeights() const {
     for (int i = 0; i < numberOfItems; ++i) {
@@ -28,22 +29,6 @@ void KnapsackProblem::checkAll() const{
     checkValues();
 }
 
-
-void KnapsackProblem::printProblem() {
-    std::cout << "Capacity: " << capacity << std::endl;
-    std::cout << "Number of items: " << numberOfItems << std::endl;
-    std::cout << "Weights: ";
-    for (int i = 0; i < numberOfItems; ++i) {
-        std::cout << weights[i] << " ";
-    }
-    std::cout << std::endl;
-    std::cout << "Values: ";
-    for (int i = 0; i < numberOfItems; ++i) {
-        std::cout << values[i] << " ";
-    }
-    std::cout << std::endl;
-}
-
 int KnapsackProblem::evaluateSolution(std::vector<int> solution) {
     int sum = 0;
     int weight = 0;
@@ -58,29 +43,42 @@ int KnapsackProblem::evaluateSolution(std::vector<int> solution) {
 void KnapsackProblem::saveToFile(const std::string& fileName) {
     std::ofstream file;
     file.open(fileName);
-    file << numberOfItems << std::endl;
-    file << capacity << std::endl;
+
+    std::stringstream ss;
+
+    ss << numberOfItems << " " << capacity << std::endl;
     for (int i = 0; i < numberOfItems; ++i) {
-        file << values[i] << " " << weights[i] << std::endl;
+        ss << values[i] << " " << weights[i] << std::endl;
     }
-    file << std::endl;
+    std::string s = ss.str();
+    s.pop_back();
+    file << s;
     file.close();
 }
 
 void KnapsackProblem::loadFromFile(const std::string& fileName) {
     std::ifstream file;
     file.open(fileName);
+    file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     if (file.is_open()) {
         file >> numberOfItems;
         file >> capacity;
         weights.resize(numberOfItems);
         values.resize(numberOfItems);
-        for (int i = 0; i < numberOfItems; ++i) {
-            file >> values[i];
-            file >> weights[i];
+        int i = 0;
+        while (!file.eof()) {
+            try {
+                file >> values[i];
+                file >> weights[i];
+                i++;
+            }
+            catch (std::ifstream::failure& e) {
+                throw InvalidCharacterException("Invalid character in line " + std::to_string(i+2));
+            }
+
+            if (!file.eof() && file.peek() != '\n') throw InvalidFileFormatException("To many arguments in line " + std::to_string(i+2));
         }
-        file.close();
     }
     else {
         throw FileProblemException("File not found");

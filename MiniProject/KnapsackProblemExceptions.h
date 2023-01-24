@@ -88,4 +88,36 @@ private:
     std::string message;
 };
 
+class InvalidFileFormatException : public std::exception {
+public:
+    InvalidFileFormatException() {
+        message = "Invalid file format";
+    }
+
+    explicit InvalidFileFormatException(std::string message) : message(std::move(message)) {}
+
+    const char *what() const noexcept override {
+        return message.c_str();
+    }
+
+private:
+    std::string message;
+};
+
+class InvalidCharacterException : public std::exception {
+public:
+    InvalidCharacterException() {
+        message = "Invalid character";
+    }
+
+    explicit InvalidCharacterException(std::string message) : message(std::move(message)) {}
+
+    const char *what() const noexcept override {
+        return message.c_str();
+    }
+
+private:
+    std::string message;
+};
+
 #endif //TEP_KNAPSACKPROBLEMEXCEPTIONS_H

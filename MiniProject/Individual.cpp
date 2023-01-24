@@ -91,15 +91,6 @@ bool Individual::checkAll() const {
     return checkProblem();
 }
 
-std::ostream &operator<<(std::ostream &os, const Individual &individual) {
-    os << "genes: ";
-    for (int i = 0; i < individual.getGenesLength(); ++i) {
-        os << individual.genes[i] << " ";
-    }
-    os << std::endl << "fitness: " << individual.fitness << std::endl;
-    return os;
-}
-
 Individual::Individual(Individual &&other) {
     if (this != &other) {
         this->genes = other.getGenes();

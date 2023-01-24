@@ -47,23 +47,6 @@ void GeneticAlgorithm::run() {
     }
 }
 
-void GeneticAlgorithm::printBestIndividual() {
-    MySmartPointer<Individual> bestIndividualNow = population[0];
-    for (int i = 1; i < populationSize; ++i) {
-        if (population[i]->getFitness() > bestIndividualNow->getFitness()) {
-            bestIndividualNow = population[i];
-        }
-    }
-
-    if (bestIndividualNow->getFitness() > bestIndividual->getFitness()) {
-        bestIndividual = bestIndividualNow;
-    }
-
-    std::cout << "Best individual: " << std::endl;
-    std::cout << *bestIndividual << std::endl;
-
-}
-
 void GeneticAlgorithm::clearPopulation() {
     population.clear();
     bestIndividual = nullptr;

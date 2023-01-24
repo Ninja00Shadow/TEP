@@ -17,6 +17,21 @@ std::ostream &operator<<(std::ostream &os, const std::tuple<std::vector<int>, in
     return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const KnapsackProblem& problem) {
+    os << "Capacity: " << problem.capacity << std::endl;
+    os << "Number of items: " << problem.numberOfItems << std::endl;
+    os << "Weights: ";
+    for (auto weight : problem.weights) {
+        os << weight << " ";
+    }
+    os << std::endl << "Values: ";
+    for (auto value : problem.values) {
+        os << value << " ";
+    }
+    os << std::endl;
+    return os;
+}
+
 
 void test1() {
     int capacity = 15;
@@ -128,7 +143,7 @@ void testSaving() {
 
     GeneticAlgorithm geneticAlgorithm =  GeneticAlgorithm(200, 100, 0.05, 0.8, &problem);
     geneticAlgorithm.run();
-    geneticAlgorithm.printBestIndividual();
+    std::cout << geneticAlgorithm.getBestIndividual() << std::endl;
     geneticAlgorithm.clearPopulation();
 }
 
@@ -144,7 +159,7 @@ void testLoadingSmallProblems() {
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 10; ++i) {
         geneticAlgorithm.run();
-        geneticAlgorithm.printBestIndividual();
+        std::cout << geneticAlgorithm.getBestIndividual() << std::endl;
         geneticAlgorithm.clearPopulation();
     }
     auto finish = std::chrono::high_resolution_clock::now();
@@ -157,19 +172,29 @@ void testLoadingLargeProblems() {
                            "instances_01_KP/large_scale/knapPI_1_1000_1000_1", "instances_01_KP/large_scale/knapPI_1_2000_1000_1",
                            "instances_01_KP/large_scale/knapPI_1_5000_1000_1", "instances_01_KP/large_scale/knapPI_1_10000_1000_1",
                            "instances_01_KP/large_scale/knapPI_2_100_1000_1", "instances_01_KP/large_scale/knapPI_2_200_1000_1"};
-    KnapsackProblem* problem = new KnapsackProblem(paths[0]);
+    KnapsackProblem problem = KnapsackProblem(paths[0]);
 
-    GeneticAlgorithm *geneticAlgorithm = new GeneticAlgorithm(100, 2000, 0.0, 0.7, problem);
+    GeneticAlgorithm geneticAlgorithm = GeneticAlgorithm(100, 2000, 0.0, 0.7, &problem);
 
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 10; ++i) {
-        geneticAlgorithm->run();
-        geneticAlgorithm->printBestIndividual();
-        geneticAlgorithm->clearPopulation();
+        geneticAlgorithm.run();
+        std::cout << geneticAlgorithm.getBestIndividual() << std::endl;
+        geneticAlgorithm.clearPopulation();
     }
     auto finish = std::chrono::high_resolution_clock::now();
 
     std::cout << "Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << " ms" << std::endl;
+}
+
+void testHandlingBadFile() {
+    try {
+        KnapsackProblem problem = KnapsackProblem("test.txt");
+        std::cout << problem << std::endl;
+    }
+    catch (FileProblemException& e) {
+        std::cout << e.what() << std::endl;
+    }
 }
 
 int main() {
@@ -191,4 +216,8 @@ int main() {
 
     testLoadingSmallProblems();
 //    testLoadingLargeProblems();
+
+    std::cout << "-------------------------------------------------------------------------------------" << std::endl;
+
+    testHandlingBadFile();
 }

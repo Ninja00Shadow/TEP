@@ -31,8 +31,6 @@ public:
     std::vector<int> getGenes() const { return genes; }
     int getGenesLength() const { return genes.size(); }
 
-    friend std::ostream &operator<<(std::ostream &os, const Individual &individual);
-
 private:
     std::vector<int> genes;
     int fitness;

@@ -9,6 +9,8 @@
 #include "KnapsackProblemExceptions.h"
 
 class KnapsackProblem {
+    friend std::ostream& operator<<(std::ostream& os, const KnapsackProblem& problem);
+
 public:
     KnapsackProblem(int capacity, int numberOfItems, std::vector<int>& weights, std::vector<int>& values);
 
@@ -19,8 +21,6 @@ public:
     int getNumberOfItems() const { return numberOfItems; }
 
     void setValue(int itemNumber, int value) { values[itemNumber] = value; }
-
-    void printProblem();
 
     int evaluateSolution(std::vector<int> solution);
 

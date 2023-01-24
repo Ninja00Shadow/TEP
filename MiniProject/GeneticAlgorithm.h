@@ -24,8 +24,6 @@ public:
 
     void clearPopulation();
 
-    void printBestIndividual();
-
     std::tuple<std::vector<int>, int> getBestIndividual();
 
 private:
